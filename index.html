@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1220">
+<title>MR / SHADY SAAD — إدارة الطلاب</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#0b1220;--panel:#111c2e;--panel2:#16243a;--line:#27364e;--text:#edf3ff;--muted:#9eafc8;--accent:#54d6b2;--blue:#73a7ff;--danger:#ff7d8a;--warn:#ffc66d}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#152943 0,#0b1220 55%);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;color:var(--text);min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:11px 15px;background:var(--accent);color:#08251f;font-weight:800}button.secondary{background:#22334b;color:var(--text);border:1px solid var(--line)}button.danger{background:#542b3a;color:#ffdce1;border:1px solid #84404d}button:disabled{opacity:.5;cursor:not-allowed}.wrap{max-width:1200px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,#54d6b2,#73a7ff);display:grid;place-items:center;color:#081522;font-weight:1000;font-size:18px;box-shadow:0 8px 25px #0005}.brand h1{font-size:18px;margin:0}.brand p{color:var(--muted);margin:3px 0 0;font-size:12px}.pill{border:1px solid #2b675c;background:#12372f;color:#9df5dc;border-radius:999px;padding:7px 11px;font-size:12px}.panel{background:#101b2ceF;border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 14px 40px #0002}.hidden{display:none!important}.muted{color:var(--muted)}.small{font-size:12px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}.stat span{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:25px;margin-top:8px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.tabs button{background:#17263b;color:#b9c9df;border:1px solid var(--line)}.tabs button.active{background:var(--accent);color:#08251f;border-color:transparent}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.row .fit{flex:0 0 auto}.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;color:var(--muted)}input,select,textarea{width:100%;background:#0b1422;color:var(--text);border:1px solid #30415b;border-radius:11px;padding:11px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--accent)}textarea{min-height:80px;resize:vertical}.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.sectionhead h2{font-size:18px;margin:0}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:13px;margin-top:12px}table{border-collapse:collapse;width:100%;min-width:640px}th,td{text-align:right;padding:12px;border-bottom:1px solid var(--line);font-size:13px}th{color:#9eb1cb;background:#142238;font-weight:700}tr:last-child td{border-bottom:0}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:7px 10px;font-size:12px}.notice{padding:12px 14px;border-radius:12px;background:#14263b;border:1px solid #2c4767;color:#c8dcf8;font-size:13px;line-height:1.7}.notice.error{background:#3b202a;border-color:#74404d;color:#ffdce1}.notice.ok{background:#12342f;border-color:#286657;color:#b9f8e5}.auth{max-width:480px;margin:6vh auto}.auth h2{margin-top:0}.cameraBox{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:14px}.video{width:100%;min-height:240px;max-height:420px;background:#05080e;border-radius:14px;object-fit:cover;border:1px solid var(--line)}.qrCard{background:white;color:#132033;border-radius:14px;padding:16px;text-align:center;display:inline-block}.qrCard strong{display:block;margin-bottom:8px}.toast{position:fixed;bottom:18px;left:18px;right:18px;max-width:560px;margin:auto;padding:13px 16px;border-radius:13px;background:#1b2b41;border:1px solid #49617e;box-shadow:0 10px 35px #0007;z-index:20}.toast.bad{border-color:#8e4c59}.badge{display:inline-block;border-radius:99px;padding:4px 8px;font-size:11px;background:#20334a;color:#c7dbf4}.badge.green{background:#174638;color:#a9f4d7}.badge.red{background:#492833;color:#ffc3cd}.empty{text-align:center;padding:28px;color:var(--muted)}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.qrout{display:flex;justify-content:center;padding:16px}.right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+@media(max-width:760px){.wrap{padding:12px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stat strong{font-size:22px}.formgrid{grid-template-columns:1fr 1fr}.cameraBox,.split{grid-template-columns:1fr}.panel{padding:14px}.brand h1{font-size:16px}.top{align-items:flex-start}}
+@media(max-width:430px){.formgrid{grid-template-columns:1fr}.grid{gap:8px}.stat{padding:12px}.stat strong{font-size:20px}.tabs button{padding:9px 11px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand"><div class="logo">MR</div><div><h1>MR / SHADY SAAD</h1><p>نظام إدارة الطلاب والحضور والاشتراكات</p></div></div>
+  <div class="right"><span class="pill" id="syncStatus">غير متصل</span><button class="secondary" id="configBtn">إعداد الربط</button><button class="secondary hidden" id="logoutBtn">تسجيل الخروج</button></div>
+</header>
+
+<section id="configPanel" class="panel hidden">
+  <div class="sectionhead"><h2>إعداد قاعدة البيانات المشتركة</h2><button class="secondary fit" id="closeConfig">إغلاق</button></div>
+  <p class="muted small">اكتب بيانات مشروع Supabase مرة على كل جهاز. مفتاح anon/publishable فقط، ولا تضع Service Role Key هنا.</p>
+  <div class="formgrid">
+    <div class="field" style="grid-column:1/-1"><label>Project URL</label><input id="projectUrl" placeholder="https://xxxx.supabase.co" dir="ltr"></div>
+    <div class="field" style="grid-column:1/-1"><label>Publishable key أو anon public key</label><input id="publicKey" placeholder="sb_publishable_... أو eyJ..." dir="ltr"></div>
+  </div>
+  <div class="row" style="margin-top:12px"><button id="saveConfig" class="fit">حفظ الاتصال</button><span class="muted small">البيانات تظل على قاعدة البيانات السحابية، وليس على جهاز واحد.</span></div>
+</section>
+
+<section id="authPanel" class="panel auth">
+  <h2>دخول المدرّس</h2><p class="muted">سجّل الدخول بنفس الحساب من الكمبيوتر والموبايل.</p>
+  <div class="field"><label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="username" placeholder="name@example.com" dir="ltr"></div>
+  <div class="field" style="margin-top:10px"><label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="كلمة المرور"></div>
+  <div class="row" style="margin-top:14px"><button id="loginBtn">تسجيل الدخول</button><button class="secondary" id="signupBtn">إنشاء حساب</button></div>
+  <p class="muted small">لو أنشأت حسابًا جديدًا، اتبع رسالة تأكيد البريد إن كانت مفعّلة في إعدادات Supabase.</p>
+  <div id="authMsg" class="notice hidden" style="margin-top:12px"></div>
+</section>
+
+<main id="app" class="hidden">
+  <div class="grid">
+    <div class="stat"><span>إجمالي الطلاب</span><strong id="statStudents">0</strong></div>
+    <div class="stat"><span>حضور اليوم</span><strong id="statAttendance">0</strong></div>
+    <div class="stat"><span>تحصيل الشهر</span><strong id="statPaid">0 ج.م</strong></div>
+    <div class="stat"><span>إجمالي المتبقي هذا الشهر</span><strong id="statDue">0 ج.م</strong></div>
+  </div>
+  <nav class="tabs">
+    <button class="active" data-tab="students">الطلاب</button><button data-tab="attendance">تسجيل الحضور</button><button data-tab="payments">المدفوعات</button><button data-tab="reports">التقارير</button>
+  </nav>
+
+  <section id="tab-students" class="panel">
+    <div class="sectionhead"><h2>إدارة الطلاب</h2><button id="newStudentBtn">+ إضافة طالب</button></div>
+    <div id="studentForm" class="hidden">
+      <div class="formgrid">
+        <div class="field"><label>اسم الطالب *</label><input id="sName" placeholder="اسم الطالب"></div>
+        <div class="field"><label>الصف الدراسي</label><input id="sGrade" placeholder="مثال: تالتة ثانوي"></div>
+        <div class="field"><label>المجموعة</label><input id="sGroup" placeholder="مثال: مجموعة الأحد"></div>
+        <div class="field"><label>رقم الهاتف</label><input id="sPhone" inputmode="tel" placeholder="01xxxxxxxxx"></div>
+        <div class="field"><label>الاشتراك الشهري (ج.م)</label><input id="sFee" type="number" min="0" value="0"></div>
+        <div class="field"><label>تاريخ البداية</label><input id="sStart" type="date"></div>
+        <div class="field" style="grid-column:1/-1"><label>ملاحظات</label><textarea id="sNotes" placeholder="ملاحظات اختيارية"></textarea></div>
+      </div>
+      <div class="row" style="margin-top:12px"><button id="saveStudentBtn" class="fit">حفظ الطالب</button><button id="cancelStudentBtn" class="secondary fit">إلغاء</button><span class="muted small" id="editLabel"></span></div>
+    </div>
+    <div class="row" style="margin-top:12px"><input id="studentSearch" placeholder="ابحث باسم الطالب أو المجموعة أو الصف..."></div>
+    <div class="tablewrap"><table><thead><tr><th>الطالب</th><th>الصف / المجموعة</th><th>الاشتراك</th><th>المتبقي هذا الشهر</th><th>إجراءات</th></tr></thead><tbody id="studentsBody"></tbody></table></div>
+  </section>
+
+  <section id="tab-attendance" class="panel hidden">
+    <div class="sectionhead"><h2>تسجيل الحضور بالـ QR</h2><span class="badge green">متصل بقاعدة البيانات</span></div>
+    <div class="notice">افتح الصفحة من رابط HTTPS، واسمح باستخدام الكاميرا. وجّهها إلى كود الطالب المطبوع أو المعروض على شاشة جهاز آخر.</div>
+    <div class="cameraBox" style="margin-top:14px">
+      <div><video id="video" class="video" playsinline muted></video><div class="row" style="margin-top:10px"><button id="startCamera">تشغيل الكاميرا</button><button class="secondary" id="stopCamera">إيقاف</button></div><p class="muted small" id="cameraMsg">الكاميرا لم تبدأ بعد.</p></div>
+      <div>
+        <div class="field"><label>أو اختر الطالب يدويًا</label><select id="attendanceStudent"><option value="">اختر طالبًا</option></select></div>
+        <div class="field" style="margin-top:10px"><label>التاريخ</label><input id="attendanceDate" type="date"></div>
+        <div class="field" style="margin-top:10px"><label>الحالة</label><select id="attendanceStatus"><option value="حاضر">حاضر</option><option value="متأخر">متأخر</option><option value="غائب">غائب</option></select></div>
+        <button id="manualAttendance" style="width:100%;margin-top:12px">تسجيل الحضور يدويًا</button>
+        <div id="lastScan" class="notice hidden" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="sectionhead" style="margin-top:24px"><h2>سجل اليوم</h2><span class="muted small" id="todayLabel"></span></div>
+    <div class="tablewrap"><table><thead><tr><th>الطالب</th><th>التاريخ</th><th>الوقت</th><th>الحالة</th></tr></thead><tbody id="attendanceBody"></tbody></table></div>
+  </section>
+
+  <section id="tab-payments" class="panel hidden">
+    <div class="sectionhead"><h2>تسجيل دفعة</h2></div>
+    <div class="formgrid">
+      <div class="field"><label>الطالب *</label><select id="paymentStudent"><option value="">اختر طالبًا</option></select></div>
+      <div class="field"><label>المبلغ (ج.م) *</label><input id="paymentAmount" type="number" min="1" placeholder="مثال: 500"></div>
+      <div class="field"><label>تاريخ الدفع</label><input id="paymentDate" type="date"></div>
+      <div class="field"><label>الشهر المحتسب</label><input id="paymentMonth" type="month"></div>
+      <div class="field"><label>طريقة الدفع</label><select id="paymentMethod"><option>نقدي</option><option>محفظة إلكترونية</option><option>تحويل بنكي</option><option>أخرى</option></select></div>
+      <div class="field"><label>ملاحظات</label><input id="paymentNotes" placeholder="اختياري"></div>
+    </div>
+    <button id="savePayment" style="margin-top:12px">حفظ الدفعة</button>
+    <div class="sectionhead" style="margin-top:24px"><h2>آخر الدفعات</h2></div>
+    <div class="tablewrap"><table><thead><tr><th>الطالب</th><th>المبلغ</th><th>تاريخ الدفع</th><th>الشهر</th><th>الطريقة</th></tr></thead><tbody id="paymentsBody"></tbody></table></div>
+  </section>
+
+  <section id="tab-reports" class="panel hidden">
+    <div class="sectionhead"><h2>التقارير</h2><button class="secondary" onclick="window.print()">طباعة التقرير</button></div>
+    <div class="row"><div class="field"><label>الشهر</label><input id="reportMonth" type="month"></div><button id="refreshReport" class="fit">عرض التقرير</button></div>
+    <div id="reportSummary" class="grid"></div>
+    <div class="tablewrap"><table><thead><tr><th>الطالب</th><th>الاشتراك</th><th>المدفوع</th><th>المتبقي</th><th>الحضور</th><th>الغياب</th></tr></thead><tbody id="reportBody"></tbody></table></div>
+  </section>
+</main>
+<div id="toast" class="toast hidden"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let sb=null, session=null, students=[], attendance=[], payments=[], editingId=null, scanTimer=null, detector=null, cameraStream=null, lastScanned="", lastScanAt=0;
+const today=()=>new Date().toLocaleDateString('en-CA');
+const monthNow=()=>today().slice(0,7);
+const money=n=>`${Number(n||0).toLocaleString('en-US')} ج.م`;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DEFAULT_CONFIG={url:'https://wozgvolvbptqlkpoodet.supabase.co',key:'sb_publishable_jO3UUz2Zo4HsPB7eYE1JBQ_tDFOcY_D'}; const config=()=>{try{return JSON.parse(localStorage.getItem('mrss_config')||'null')||DEFAULT_CONFIG}catch{return DEFAULT_CONFIG}};
+function toast(msg,bad=false){$('toast').textContent=msg;$('toast').classList.remove('hidden','bad');if(bad)$('toast').classList.add('bad');setTimeout(()=>$('toast').classList.add('hidden'),4000)}
+function status(msg,good=false){$('syncStatus').textContent=msg;$('syncStatus').style.borderColor=good?'#286657':'#27364e';$('syncStatus').style.color=good?'#9df5dc':'#9eafc8'}
+function showConfig(){const c=config();$('projectUrl').value=c.url||'';$('publicKey').value=c.key||'';$('configPanel').classList.remove('hidden')}
+function initDates(){ $('attendanceDate').value=today();$('paymentDate').value=today();$('paymentMonth').value=monthNow();$('reportMonth').value=monthNow();$('sStart').value=today();$('todayLabel').textContent=today() }
+async function connect(){
+ const c=config(); if(!c.url||!c.key){$('authPanel').classList.remove('hidden');$('app').classList.add('hidden');showConfig();status('محتاج إعداد');return}
+ try{
+  sb=window.supabase.createClient(c.url,c.key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  const {data,error}=await sb.auth.getSession();if(error)throw error;session=data.session;
+  sb.auth.onAuthStateChange((_event,s)=>{session=s;setAuthUI();if(s)loadAll()});
+  setAuthUI();if(session)await loadAll();
+ }catch(e){showConfig();$('authPanel').classList.remove('hidden');$('authMsg').textContent='تعذر الاتصال: '+e.message;$('authMsg').classList.remove('hidden');status('خطأ اتصال')}
+}
+function setAuthUI(){const yes=!!session;$('authPanel').classList.toggle('hidden',yes);$('app').classList.toggle('hidden',!yes);$('logoutBtn').classList.toggle('hidden',!yes);if(yes){$('authMsg').classList.add('hidden');status('متصل',true)}else status('غير مسجل')}
+async function loadAll(){
+ if(!sb||!session)return;status('جاري المزامنة');
+ try{
+  const [s,a,p]=await Promise.all([
+   sb.from('students').select('*').order('name'),
+   sb.from('attendance').select('*').order('date',{ascending:false}).limit(5000),
+   sb.from('payments').select('*').order('payment_date',{ascending:false}).limit(5000)
+  ]);
+  if(s.error)throw s.error;if(a.error)throw a.error;if(p.error)throw p.error;
+  students=s.data||[];attendance=a.data||[];payments=p.data||[];
+  renderAll();status('متصل ومتزامن',true);
+  if(window._realtime)sb.removeChannel(window._realtime);
+  window._realtime=sb.channel('mrss-live').on('postgres_changes',{event:'*',schema:'public',table:'students'},()=>loadAll()).on('postgres_changes',{event:'*',schema:'public',table:'attendance'},()=>loadAll()).on('postgres_changes',{event:'*',schema:'public',table:'payments'},()=>loadAll()).subscribe();
+ }catch(e){status('خطأ في قاعدة البيانات');toast('مشكلة في الاتصال: '+e.message,true)}
+}
+function monthPaid(studentId,month){return payments.filter(p=>p.student_id===studentId&&p.month_key===month).reduce((n,p)=>n+Number(p.amount||0),0)}
+function monthFee(student,month){return Number(student.monthly_fee||0)}
+function studentName(id){return students.find(s=>s.id===id)?.name||'طالب غير معروف'}
+function renderAll(){
+ $('statStudents').textContent=students.length;
+ $('statAttendance').textContent=attendance.filter(a=>a.date===today()&&a.status!=='غائب').length;
+ $('statPaid').textContent=money(payments.filter(p=>(p.payment_date||'').startsWith(monthNow())).reduce((n,p)=>n+Number(p.amount||0),0));
+ $('statDue').textContent=money(students.reduce((n,s)=>n+Math.max(0,monthFee(s,monthNow())-monthPaid(s.id,monthNow())),0));
+ renderStudents();fillStudentSelects();renderAttendance();renderPayments();renderReport();
+}
+function renderStudents(){
+ const q=$('studentSearch').value.trim().toLowerCase();const list=students.filter(s=>[s.name,s.grade,s.group_name,s.phone].join(' ').toLowerCase().includes(q));
+ $('studentsBody').innerHTML=list.length?list.map(s=>`<tr><td><strong>${esc(s.name)}</strong><div class="muted small">${esc(s.phone||'')}</div></td><td>${esc(s.grade||'—')}<div class="muted small">${esc(s.group_name||'بدون مجموعة')}</div></td><td>${money(s.monthly_fee)}</td><td>${money(Math.max(0,Number(s.monthly_fee||0)-monthPaid(s.id,monthNow())))}</td><td><div class="actions"><button class="secondary" onclick="showQr('${s.id}')">QR</button><button class="secondary" onclick="editStudent('${s.id}')">تعديل</button><button class="danger" onclick="deleteStudent('${s.id}')">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="5" class="empty">لا يوجد طلاب. اضغط «إضافة طالب» للبدء.</td></tr>';
+}
+function fillStudentSelects(){
+ const opts='<option value="">اختر طالبًا</option>'+students.map(s=>`<option value="${s.id}">${esc(s.name)} — ${esc(s.group_name||s.grade||'')}</option>`).join('');
+ const a=$('attendanceStudent').value,p=$('paymentStudent').value;$('attendanceStudent').innerHTML=opts;$('paymentStudent').innerHTML=opts;$('attendanceStudent').value=a;$('paymentStudent').value=p;
+}
+function renderAttendance(){
+ const list=attendance.filter(a=>a.date===today()).sort((x,y)=>(y.time||'').localeCompare(x.time||''));
+ $('attendanceBody').innerHTML=list.length?list.map(a=>`<tr><td>${esc(studentName(a.student_id))}</td><td>${esc(a.date)}</td><td>${esc((a.time||'').slice(0,5))}</td><td><span class="badge ${a.status==='حاضر'?'green':a.status==='غائب'?'red':''}">${esc(a.status)}</span></td></tr>`).join(''):'<tr><td colspan="4" class="empty">لم يتم تسجيل حضور اليوم.</td></tr>';
+}
+function renderPayments(){
+ $('paymentsBody').innerHTML=payments.slice(0,80).map(p=>`<tr><td>${esc(studentName(p.student_id))}</td><td>${money(p.amount)}</td><td>${esc(p.payment_date||'')}</td><td>${esc(p.month_key||'')}</td><td>${esc(p.method||'')}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">لا توجد دفعات حتى الآن.</td></tr>';
+}
+function renderReport(){
+ const m=$('reportMonth').value||monthNow();let paid=0,due=0,present=0,absent=0;
+ const rows=students.map(s=>{const ps=payments.filter(p=>p.student_id===s.id&&p.month_key===m).reduce((n,p)=>n+Number(p.amount||0),0);const d=Math.max(0,Number(s.monthly_fee||0)-ps);const att=attendance.filter(a=>a.student_id===s.id&&(a.date||'').startsWith(m));const pr=att.filter(a=>a.status==='حاضر'||a.status==='متأخر').length;const ab=att.filter(a=>a.status==='غائب').length;paid+=ps;due+=d;present+=pr;absent+=ab;return `<tr><td>${esc(s.name)}</td><td>${money(s.monthly_fee)}</td><td>${money(ps)}</td><td>${money(d)}</td><td>${pr}</td><td>${ab}</td></tr>`});
+ $('reportSummary').innerHTML=[['تحصيل الشهر',money(paid)],['المتبقي',money(due)],['الحضور المسجل',present],['الغياب المسجل',absent]].map(x=>`<div class="stat"><span>${x[0]}</span><strong>${x[1]}</strong></div>`).join('');
+ $('reportBody').innerHTML=rows.join('')||'<tr><td colspan="6" class="empty">لا توجد بيانات.</td></tr>';
+}
+function resetStudentForm(){editingId=null;['sName','sGrade','sGroup','sPhone','sNotes'].forEach(id=>$(id).value='');$('sFee').value=0;$('sStart').value=today();$('studentForm').classList.add('hidden');$('editLabel').textContent=''}
+function editStudent(id){const s=students.find(x=>x.id===id);if(!s)return;editingId=id;$('sName').value=s.name||'';$('sGrade').value=s.grade||'';$('sGroup').value=s.group_name||'';$('sPhone').value=s.phone||'';$('sFee').value=s.monthly_fee||0;$('sStart').value=s.start_date||today();$('sNotes').value=s.notes||'';$('editLabel').textContent='تعديل بيانات: '+s.name;$('studentForm').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'})}
+async function saveStudent(){
+ const name=$('sName').value.trim();if(!name)return toast('اكتب اسم الطالب أولًا',true);
+ const payload={name,grade:$('sGrade').value.trim(),group_name:$('sGroup').value.trim(),phone:$('sPhone').value.trim(),monthly_fee:Number($('sFee').value||0),start_date:$('sStart').value||today(),notes:$('sNotes').value.trim()};
+ try{let r=editingId?await sb.from('students').update(payload).eq('id',editingId).select().single():await sb.from('students').insert(payload).select().single();if(r.error)throw r.error;toast(editingId?'تم تعديل بيانات الطالب':'تمت إضافة الطالب');resetStudentForm();await loadAll()}catch(e){toast('لم يتم الحفظ: '+e.message,true)}
+}
+async function deleteStudent(id){const s=students.find(x=>x.id===id);if(!s||!confirm('حذف الطالب '+s.name+'؟ سيتم حذف سجلات حضوره ودفعاته المرتبطة به.'))return;try{const r=await sb.from('students').delete().eq('id',id);if(r.error)throw r.error;toast('تم حذف الطالب');await loadAll()}catch(e){toast('تعذر الحذف: '+e.message,true)}}
+function showQr(id){
+ const s=students.find(x=>x.id===id);if(!s)return;
+ const w=window.open('','_blank','width=420,height=540');if(!w)return toast('اسمح بفتح النوافذ المنبثقة لطباعة الكود',true);
+ w.document.write(`<!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><title>QR - ${esc(s.name)}</title><body style="font-family:Arial;text-align:center;padding:24px;color:#102033"><h2>MR / SHADY SAAD</h2><h3>${esc(s.name)}</h3><div id="q" style="display:flex;justify-content:center;margin:20px"></div><p>كود تسجيل حضور الطالب</p><button onclick="print()">طباعة الكود</button><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"><\/script><script>new QRCode(document.getElementById('q'),{text:${JSON.stringify(s.id)},width:220,height:220});<\/script></body></html>`);w.document.close();
+}
+async function addAttendance(studentId,statusVal,dateVal){
+ if(!studentId)return toast('اختار الطالب أو امسح كوده',true);
+ const now=new Date();const time=now.toTimeString().slice(0,8);
+ try{
+  const r=await sb.from('attendance').upsert({student_id:studentId,date:dateVal||today(),time,status:statusVal||'حاضر'},{onConflict:'student_id,date'}).select().single();
+  if(r.error)throw r.error;const s=students.find(x=>x.id===studentId);$('lastScan').textContent=`تم تسجيل ${statusVal||'حاضر'}: ${s?.name||''} — ${dateVal||today()} ${time.slice(0,5)}`;$('lastScan').classList.remove('hidden');toast('تم تسجيل الحضور: '+(s?.name||''));await loadAll();
+ }catch(e){toast('تعذر تسجيل الحضور: '+e.message,true)}
+}
+async function startCamera(){
+ if(!window.isSecureContext){$('cameraMsg').textContent='الكاميرا تحتاج رابط HTTPS أو localhost.';return toast('افتح الموقع من رابط HTTPS لتشغيل الكاميرا',true)}
+ if(!navigator.mediaDevices?.getUserMedia){$('cameraMsg').textContent='المتصفح لا يتيح الوصول للكاميرا.';return toast('المتصفح لا يدعم تشغيل الكاميرا هنا',true)}
+ if(!('BarcodeDetector' in window)){ $('cameraMsg').textContent='هذا المتصفح لا يدعم قراءة QR مباشرة. جرّب Chrome محدّثًا على Android.';return toast('المتصفح لا يدعم قارئ QR المدمج؛ استخدم Chrome محدّثًا',true)}
+ try{
+  detector=new BarcodeDetector({formats:['qr_code']});cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});$('video').srcObject=cameraStream;await $('video').play();$('cameraMsg').textContent='الكاميرا تعمل — وجّهها إلى QR الطالب.';scanLoop();
+ }catch(e){$('cameraMsg').textContent='تعذر فتح الكاميرا: '+e.message;toast('تعذر فتح الكاميرا. تأكد من الإذن واستخدم HTTPS.',true)}
+}
+async function scanLoop(){
+ if(!cameraStream||!detector)return;
+ try{const codes=await detector.detect($('video'));if(codes.length){const val=codes[0].rawValue;if(val&&val!==lastScanned&&Date.now()-lastScanAt>2500){lastScanned=val;lastScanAt=Date.now();if(students.some(s=>s.id===val)){await addAttendance(val,'حاضر',$('attendanceDate').value||today())}else toast('الكود غير معروف في قاعدة بيانات الطلاب',true)}}}catch(e){}
+ scanTimer=requestAnimationFrame(scanLoop);
+}
+function stopCamera(){if(scanTimer)cancelAnimationFrame(scanTimer);scanTimer=null;if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}$('video').srcObject=null;$('cameraMsg').textContent='تم إيقاف الكاميرا.'}
+$('configBtn').onclick=showConfig;$('closeConfig').onclick=()=>$('configPanel').classList.add('hidden');
+$('saveConfig').onclick=()=>{const url=$('projectUrl').value.trim().replace(/\/$/,''),key=$('publicKey').value.trim();if(!url.startsWith('https://')||!key)return toast('اكتب Project URL صحيحًا والمفتاح العام',true);localStorage.setItem('mrss_config',JSON.stringify({url,key}));$('configPanel').classList.add('hidden');toast('تم حفظ إعداد الاتصال');connect()};
+$('loginBtn').onclick=async()=>{if(!sb)return toast('اضبط الاتصال بقاعدة البيانات أولًا',true);const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('authMsg').textContent=error.message;$('authMsg').classList.remove('hidden')}else{session=data.session;setAuthUI();loadAll()}};
+$('signupBtn').onclick=async()=>{if(!sb)return toast('اضبط الاتصال بقاعدة البيانات أولًا',true);const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(error){$('authMsg').textContent=error.message;$('authMsg').classList.remove('hidden')}else{$('authMsg').textContent=data.session?'تم إنشاء الحساب. يمكنك الدخول الآن.':'تم إنشاء الحساب. افحص بريدك الإلكتروني لتأكيد الحساب إذا كان التأكيد مفعّلًا.';$('authMsg').classList.remove('hidden')}};
+$('logoutBtn').onclick=async()=>{stopCamera();await sb.auth.signOut();session=null;setAuthUI()};
+$('newStudentBtn').onclick=()=>{$('studentForm').classList.remove('hidden');editingId=null;$('editLabel').textContent='إضافة طالب جديد';$('sStart').value=today();window.scrollTo({top:0,behavior:'smooth'})};
+$('cancelStudentBtn').onclick=resetStudentForm;$('saveStudentBtn').onclick=saveStudent;$('studentSearch').oninput=renderStudents;
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));['students','attendance','payments','reports'].forEach(t=>$('tab-'+t).classList.toggle('hidden',b.dataset.tab!==t));if(b.dataset.tab!=='attendance')stopCamera()});
+$('startCamera').onclick=startCamera;$('stopCamera').onclick=stopCamera;$('manualAttendance').onclick=()=>addAttendance($('attendanceStudent').value,$('attendanceStatus').value,$('attendanceDate').value||today());
+$('savePayment').onclick=async()=>{const student_id=$('paymentStudent').value,amount=Number($('paymentAmount').value);if(!student_id||amount<=0)return toast('اختار الطالب واكتب مبلغًا صحيحًا',true);try{const r=await sb.from('payments').insert({student_id,amount,payment_date:$('paymentDate').value||today(),month_key:$('paymentMonth').value||monthNow(),method:$('paymentMethod').value,notes:$('paymentNotes').value.trim()});if(r.error)throw r.error;$('paymentAmount').value='';$('paymentNotes').value='';toast('تم حفظ الدفعة');await loadAll()}catch(e){toast('تعذر حفظ الدفعة: '+e.message,true)}};
+$('refreshReport').onclick=renderReport;
+initDates();connect();
+</script>
+</body></html>
