@@ -106,7 +106,16 @@
 
       <section id="page-attendance" class="hidden">
         <div class="panel"><div class="panel-head"><h2>تسجيل الحضور والغياب</h2><button class="secondary" onclick="showPage('scanner')">افتح سكان QR</button></div>
-          <form id="attendanceForm" class="formgrid"><div class="field"><label>الطالب *</label><select name="student_id" id="attendanceStudent" required></select></div><div class="field"><label>التاريخ</label><input name="session_date" type="date" id="attendanceDate" required></div><div class="field"><label>الحالة</label><select name="status"><option value="present">حاضر</option><option value="absent">غائب</option><option value="late">متأخر</option><option value="excused">غياب بعذر</option></select></div><div class="field"><label>المجموعة</label><select name="group_id" id="attendanceGroup"><option value="">حسب مجموعة الطالب</option></select></div><div class="field"><label>ملاحظات</label><input name="notes"></div><div class="field" style="justify-content:end"><button>تسجيل</button></div></form><p id="attendanceMsg" class="msg"></p></div>
+          <form id="attendanceForm">
+            <div class="payment-picker attendance-picker">
+              <div class="field"><label>① اختار المجموعة أولاً *</label><select name="group_id" id="attendanceGroup" required onchange="resetAttendanceStudentPicker();filterAttendanceStudents()"><option value="">اختر المجموعة أولاً</option></select></div>
+              <div class="field"><label>② ابحث عن الطالب داخل المجموعة المختارة</label><input id="attendanceStudentSearch" type="search" placeholder="اكتب اسم الطالب أو كود الطالب..." oninput="filterAttendanceStudents()" autocomplete="off" disabled></div>
+              <div class="payment-picker-meta"><span id="attendanceStudentCount">اختار مجموعة لعرض طلابها</span><span id="attendanceChosenStudent">لم يتم اختيار طالب بعد</span></div>
+              <div id="attendanceStudentResults" class="payment-student-results"><div class="empty">اختار المجموعة أولاً، وهتظهر أسماء طلابها هنا.</div></div>
+              <select name="student_id" id="attendanceStudent" required disabled class="hidden"><option value="">اختر المجموعة أولاً</option></select>
+            </div>
+            <div class="formgrid"><div class="field"><label>التاريخ</label><input name="session_date" type="date" id="attendanceDate" required></div><div class="field"><label>الحالة</label><select name="status"><option value="present">حاضر</option><option value="absent">غائب</option><option value="late">متأخر</option><option value="excused">غياب بعذر</option></select></div><div class="field"><label>ملاحظات</label><input name="notes"></div><div class="field" style="justify-content:end"><button id="saveAttendance" disabled>تسجيل</button></div></div>
+          </form><p id="attendanceMsg" class="msg"></p></div>
         <div class="panel"><div class="panel-head"><h2>سجل الحضور</h2><div class="toolbar"><input id="attendanceFilterDate" type="date" class="search" onchange="renderAttendance()"><button class="secondary" onclick="document.getElementById('attendanceFilterDate').value='';renderAttendance()">عرض الكل</button></div></div><div id="attendanceTable" class="tablewrap"></div></div>
       </section>
 
@@ -218,13 +227,14 @@ function populateSelects(){
   $('studentGroup').innerHTML='<option value="">بدون مجموعة</option>'+opts(cache.groups,g=>g.name,false);
   const groupOptions='<option value="all">كل المجموعات</option>'+opts(cache.groups,g=>g.name,false);$('globalGroupFilter').innerHTML=groupOptions;$('studentGroupFilter').innerHTML=groupOptions;$('editStudentGroup').innerHTML='<option value="">بدون مجموعة</option>'+opts(cache.groups,g=>g.name,false);
   const chosen=$('globalGroupFilter').dataset.chosen||'all';$('globalGroupFilter').value=[...$('globalGroupFilter').options].some(o=>o.value===chosen)?chosen:'all';$('studentGroupFilter').value=$('globalGroupFilter').value;
-  $('attendanceStudent').innerHTML=opts(cache.students,s=>s.full_name+' · '+s.student_code);
+  // قائمة الطالب في الحضور تُبنى بعد اختيار المجموعة فقط.
   if($('scanGroup')){const oldScanGroup=$('scanGroup').value;$('scanGroup').innerHTML='<option value="">اختر المجموعة</option>'+opts(cache.groups,g=>g.name,false);if(oldScanGroup&&[...$('scanGroup').options].some(o=>o.value===oldScanGroup))$('scanGroup').value=oldScanGroup;else if($('globalGroupFilter').value!=='all')$('scanGroup').value=$('globalGroupFilter').value;}
   if($('scanDate')&&!$('scanDate').value)$('scanDate').value=today();
   if($('paymentGroup')){const oldPaymentGroup=$('paymentGroup').value;$('paymentGroup').innerHTML='<option value="">اختر المجموعة أولاً</option>'+opts(cache.groups,g=>g.name,false);if(oldPaymentGroup&&[...$('paymentGroup').options].some(o=>o.value===oldPaymentGroup))$('paymentGroup').value=oldPaymentGroup;}
   filterPaymentStudents();
   $('saleStudent').innerHTML='<option value="">بدون ربط طالب</option>'+opts(cache.students,s=>s.full_name,false);
-  $('attendanceGroup').innerHTML='<option value="">حسب مجموعة الطالب</option>'+opts(cache.groups,g=>g.name,false);
+  if($('attendanceGroup')){const oldAttendanceGroup=$('attendanceGroup').value;$('attendanceGroup').innerHTML='<option value="">اختر المجموعة أولاً</option>'+opts(cache.groups,g=>g.name,false);if(oldAttendanceGroup&&[...$('attendanceGroup').options].some(o=>o.value===oldAttendanceGroup))$('attendanceGroup').value=oldAttendanceGroup;}
+  filterAttendanceStudents();
   $('examGroup').innerHTML='<option value="">بدون تحديد مجموعة</option>'+opts(cache.groups,g=>g.name,false);
   $('saleMaterial').innerHTML=opts(cache.materials,m=>m.title+' (المتاح '+(m.stock-m.reserved)+')');
   $('questionExam').innerHTML=opts(cache.exams,e=>e.title+' · '+e.exam_code);
@@ -311,6 +321,37 @@ function showStudent(id){
 }
 function statusAr(s){return ({present:'حاضر',absent:'غائب',late:'متأخر',excused:'بعذر'})[s]||s}
 function typePayAr(s){return ({lesson:'حصص / شهر',book:'كتاب / مذكرة',reservation:'حجز',other:'أخرى'})[s]||s}
+function resetAttendanceStudentPicker(){
+ const select=$('attendanceStudent');if(select){select.value='';select.disabled=true;select.innerHTML='<option value="">اختر طالبًا</option>'}
+ if($('attendanceStudentSearch')){$('attendanceStudentSearch').value='';$('attendanceStudentSearch').disabled=!$('attendanceGroup').value}
+ if($('attendanceChosenStudent'))$('attendanceChosenStudent').textContent='لم يتم اختيار طالب بعد';
+ if($('saveAttendance'))$('saveAttendance').disabled=true;
+}
+function selectAttendanceStudent(id){
+ const s=cache.students.find(x=>x.id===id);if(!s||s.group_id!==$('attendanceGroup').value)return;
+ $('attendanceStudent').value=s.id;$('attendanceStudent').disabled=false;
+ $('attendanceChosenStudent').textContent='الطالب المختار: '+s.full_name;
+ $('saveAttendance').disabled=false;
+ document.querySelectorAll('#attendanceStudentResults .payment-student-option').forEach(b=>b.classList.toggle('selected',b.dataset.studentId===id));
+}
+function filterAttendanceStudents(){
+ const groupId=$('attendanceGroup')?.value||'';
+ const search=($('attendanceStudentSearch')?.value||'').trim().toLocaleLowerCase('ar');
+ const select=$('attendanceStudent');if(!select)return;
+ const results=$('attendanceStudentResults');
+ if(!groupId){select.innerHTML='<option value="">اختر المجموعة أولاً</option>';select.disabled=true;if(results)results.innerHTML='<div class="empty">اختار المجموعة أولاً، وهتظهر أسماء طلابها هنا.</div>';if($('attendanceStudentCount'))$('attendanceStudentCount').textContent='اختار مجموعة لعرض طلابها';return}
+ const groupStudents=cache.students.filter(s=>s.group_id===groupId&&s.active!==false);
+ const list=groupStudents.filter(s=>!search||String(s.full_name||'').toLocaleLowerCase('ar').includes(search)||String(s.student_code||'').toLocaleLowerCase('ar').includes(search));
+ const previous=select.value;
+ select.innerHTML='<option value="">— اختر الطالب —</option>'+groupStudents.map(s=>`<option value="${s.id}">${esc(s.full_name)} · ${esc(s.student_code||'بدون كود')}</option>`).join('');
+ select.disabled=false;
+ if(previous&&groupStudents.some(s=>s.id===previous))select.value=previous;
+ if($('attendanceStudentSearch'))$('attendanceStudentSearch').disabled=false;
+ if($('attendanceStudentCount'))$('attendanceStudentCount').textContent=`${list.length} طالب ظاهر من أصل ${groupStudents.length} في المجموعة`;
+ if(results)results.innerHTML=list.length?list.map(s=>`<button type="button" class="payment-student-option ${select.value===s.id?'selected':''}" data-student-id="${s.id}" onclick="selectAttendanceStudent('${s.id}')">${esc(s.full_name)}<small>كود الطالب: ${esc(s.student_code||'غير مسجل')}</small></button>`).join(''):'<div class="empty">مفيش طالب بالاسم أو الكود ده في المجموعة المختارة.</div>';
+ if(previous&&groupStudents.some(s=>s.id===previous))selectAttendanceStudent(previous);
+}
+
 function resetPaymentStudentPicker(){
  const select=$('paymentStudent');if(select){select.value='';select.disabled=true;select.innerHTML='<option value="">اختر طالبًا</option>'}
  if($('paymentStudentSearch')){$('paymentStudentSearch').value='';$('paymentStudentSearch').disabled=!$('paymentGroup').value}
@@ -349,7 +390,7 @@ async function addRow(tableName,values,msgId){
 }
 $('studentForm').addEventListener('submit',async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));f.student_code=f.student_code.trim()||('ST-'+Date.now().toString().slice(-8));f.group_id=f.group_id||null;f.active=true;const ok=await addRow('students',f,'studentMsg');if(ok)e.target.reset()});
 $('groupForm').addEventListener('submit',async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));f.monthly_fee=Number(f.monthly_fee||0);const ok=await addRow('groups',f,'groupMsg');if(ok)e.target.reset()});
-$('attendanceForm').addEventListener('submit',async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const st=cache.students.find(s=>s.id===f.student_id);f.group_id=f.group_id||st?.group_id||null;const r=await sb.from('attendance').upsert({...f,teacher_id:user.id},{onConflict:'teacher_id,student_id,group_id,session_date'});if(r.error){$('attendanceMsg').textContent='لم يتم التسجيل: '+r.error.message;return}$('attendanceMsg').textContent='تم تسجيل الحضور.';await refreshAll()});
+$('attendanceForm').addEventListener('submit',async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const st=cache.students.find(s=>s.id===f.student_id);if(!st||!f.group_id||st.group_id!==f.group_id){$('attendanceMsg').textContent='اختار المجموعة ثم اضغط على اسم الطالب من القائمة.';return}const r=await sb.from('attendance').upsert({...f,teacher_id:user.id},{onConflict:'teacher_id,student_id,group_id,session_date'});if(r.error){$('attendanceMsg').textContent='لم يتم التسجيل: '+r.error.message;return}$('attendanceMsg').textContent='تم تسجيل '+statusAr(f.status)+' للطالب '+st.full_name+'.';const keepGroup=f.group_id;await refreshAll();$('attendanceGroup').value=keepGroup;resetAttendanceStudentPicker();filterAttendanceStudents();$('attendanceDate').value=f.session_date});
 async function quickAttendance(id,status){const s=cache.students.find(x=>x.id===id);if(!s)return;const r=await sb.from('attendance').upsert({teacher_id:user.id,student_id:id,group_id:s.group_id||null,session_date:today(),status},{onConflict:'teacher_id,student_id,group_id,session_date'});if(r.error){alert(r.error.message);return}await refreshAll();alert('تم تسجيل '+statusAr(status)+' للطالب '+s.full_name)}
 $('paymentForm').addEventListener('submit',async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));const chosenStudent=cache.students.find(s=>s.id===f.student_id);if(!chosenStudent||chosenStudent.group_id!==$('paymentGroup').value){$('paymentMsg').textContent='اختار المجموعة ثم اضغط على اسم الطالب من القائمة.';return}f.amount=Number(f.amount);f.payment_type='lesson';f.month_label=(f.month_label||currentMonthLabel()).trim();const ok=await addRow('payments',f,'paymentMsg');if(ok){const keepGroup=$('paymentGroup').value;e.target.reset();$('paymentGroup').value=keepGroup;resetPaymentStudentPicker();filterPaymentStudents();$('paymentDate').value=today();$('paymentMonth').value=currentMonthLabel()}});
 $('materialForm').addEventListener('submit',async e=>{e.preventDefault();const f=Object.fromEntries(new FormData(e.target));f.price=Number(f.price||0);f.stock=Number(f.stock||0);const ok=await addRow('materials',f,'materialMsg');if(ok)e.target.reset()});
